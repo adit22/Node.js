@@ -13,8 +13,13 @@ var usersRouter = require('./routes/users');
 var dishrouter = require('./routes/dishrouter');
 var leaderrouter = require('./routes/leaderrouter');
 var promorouter = require('./routes/promorouter');
+var uploadrouter = require('./routes/uploadrouter');
+const favouriteRouter = require('./routes/favouriteRouter');
 const mongoose=require('mongoose');
-//const dishes=require('./models/dishes');
+const dishes=require('./models/dishes');
+var Promotions = require('./models/promotions');
+var Leaders = require('./models/leaders');
+var Favourites = require('./models/favourite');
 const url=config.mongoUrl;
 const connect= mongoose.connect(url);
 connect.then((db)=>{
@@ -24,7 +29,14 @@ console.log("Connected to server");
 });
 
 var app = express();
-
+app.all('*',(req,res,next)=>{
+  if(req.secure){
+    return next();
+  }
+  else{
+    res.redirect(307,'https://'+req.hostname+':'+app.get('secPort')+req.url);
+  }
+});
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -50,6 +62,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+
 
 // function auth(req,res,next){
 // //console.log(req.session);
@@ -97,7 +111,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/dishes', dishrouter);
 app.use('/leaders', leaderrouter);
 app.use('/promotions', promorouter);
-
+app.use('/upload',uploadrouter);
+app.use('/favorites', favouriteRouter);
  
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

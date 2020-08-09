@@ -2,6 +2,8 @@ const mongoose=require('mongoose');
 const schema=mongoose.Schema;
 require('mongoose-currency').loadType(mongoose);
 const currency=mongoose.Types.Currency;
+
+
 const commschm=new schema({
     rating:{
         type:Number,
@@ -14,8 +16,8 @@ const commschm=new schema({
         required:true
     },
     author:{
-        type:String,
-        required:true
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'user'
 
     }
 }
